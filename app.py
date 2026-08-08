@@ -3,15 +3,12 @@ from flask_cors import CORS
 import requests
 import os
 import tempfile
-from dotenv import load_dotenv
-
-load_dotenv()
+import base64
+from PIL import Image
+import io
 
 app = Flask(__name__, static_folder=".")
 CORS(app)
-
-HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
-API_URL = "https://api-inference.huggingface.co/models/caidas/swin2SR-classical-sr-x2-64"
 
 @app.route("/")
 def index():
@@ -25,29 +22,18 @@ def upscale():
     image_file = request.files["image"]
 
     try:
-        # Save uploaded file temporarily
-        suffix = os.path.splitext(image_file.filename)[1]
-        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-            image_file.save(tmp.name)
-            tmp_path = tmp.name
+        img = Image.open(image_file)
+        
+        new_width = img.width * 2
+        new_height = img.height * 2
+        upscaled = img.resize((new_width, new_height), Image.LANCZOS)
 
-        # Send to Hugging Face
-        with open(tmp_path, "rb") as f:
-            image_data = f.read()
+        buffer = io.BytesIO()
+        upscaled.save(buffer, format="PNG")
+        buffer.seek(0)
 
-        headers = {"Authorization": f"Bearer {HF_TOKEN}"}
-        response = requests.post(API_URL, headers=headers, data=image_data)
-
-        # Clean up temp file
-        os.unlink(tmp_path)
-
-        if response.status_code == 200:
-            # Save result and return it as base64
-            import base64
-            result_b64 = base64.b64encode(response.content).decode("utf-8")
-            return jsonify({"result_b64": result_b64})
-        else:
-            return jsonify({"error": "Model error: " + response.text}), 500
+        result_b64 = base64.b64encode(buffer.read()).decode("utf-8")
+        return jsonify({"result_b64": result_b64})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
