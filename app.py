@@ -1,3 +1,6 @@
+import sys
+print("Starting app...", flush=True)
+
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from PIL import Image
@@ -17,10 +20,14 @@ def upscale():
         return jsonify({"error": "No image uploaded"}), 400
 
     image_file = request.files["image"]
+    scale = int(request.form.get("scale", 2))
+
+    if scale not in [2, 4, 8]:
+        return jsonify({"error": "Scale must be 2, 4, or 8"}), 400
 
     try:
         img = Image.open(image_file).convert("RGB")
-        upscaled = img.resize((img.width * 2, img.height * 2), Image.LANCZOS)
+        upscaled = img.resize((img.width * scale, img.height * scale), Image.LANCZOS)
 
         buffer = io.BytesIO()
         upscaled.save(buffer, format="PNG")
