@@ -596,6 +596,36 @@
       status.textContent = `✓ Done! PDF has ${data.total_pages} pages total.`;
     } catch(e) { status.textContent = "Something went wrong."; }
   }
+
+  // Drag and drop for all upload boxes
+document.querySelectorAll(".upload-box").forEach(box => {
+  box.addEventListener("dragover", e => {
+    e.preventDefault();
+    box.classList.add("dragover");
+  });
+  box.addEventListener("dragleave", () => box.classList.remove("dragover"));
+  box.addEventListener("drop", e => {
+    e.preventDefault();
+    box.classList.remove("dragover");
+    const input = box.querySelector("input[type='file']");
+    const files = e.dataTransfer.files;
+    if (!files.length) return;
+
+    // Set files on the input
+    const dt = new DataTransfer();
+    for (const f of files) dt.items.add(f);
+    input.files = dt.files;
+
+    // Show filename feedback
+    const h3 = box.querySelector("h3");
+    if (files.length === 1) {
+      h3.textContent = "✓ " + files[0].name;
+    } else {
+      h3.textContent = "✓ " + files.length + " files selected";
+    }
+  });
+});
+  
 </script>
 
 </body>
