@@ -360,7 +360,8 @@
         const data = await response.json();
 
         if (data.result_b64) {
-          const imgSrc = "data:image/png;base64," + data.result_b64;
+          const format = data.format || "png";
+const imgSrc = `data:image/${format};base64,` + data.result_b64;
           resultImg.src = imgSrc;
           downloadBtn.href = imgSrc;
           resultSection.style.display = "block";
