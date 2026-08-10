@@ -532,7 +532,7 @@
 
   async function mergePDF() {
     const files = document.getElementById("merge-input").files;
-    if (files.length < 2) return alert("Please select at least 2 PDF files!");
+   if (files.length < 2) return alert("Hold Ctrl (or Cmd on Mac) while clicking to select multiple PDF files at once!");
     const status = document.getElementById("merge-status");
     status.textContent = "⏳ Merging...";
     const form = new FormData();
