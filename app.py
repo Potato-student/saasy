@@ -107,19 +107,22 @@ def split_pdf():
         page = int(request.form.get("page", 1)) - 1
         pdf_bytes = file.read()
         doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+        total_pages = len(doc)
 
-        if page < 0 or page >= len(doc):
-            return jsonify({"error": f"Page must be between 1 and {len(doc)}"}), 400
+        if page < 0 or page >= total_pages:
+            return jsonify({"error": f"Page must be between 1 and {total_pages}"}), 400
 
         new_doc = fitz.open()
         new_doc.insert_pdf(doc, from_page=page, to_page=page)
         buffer = io.BytesIO()
         new_doc.save(buffer)
-        new_doc.close()
-        doc.close()
         buffer.seek(0)
         b64 = base64.b64encode(buffer.read()).decode("utf-8")
-        return jsonify({"result_b64": b64, "format": "pdf", "total_pages": len(doc)})
+
+        new_doc.close()
+        doc.close()
+
+        return jsonify({"result_b64": b64, "format": "pdf", "total_pages": total_pages})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
