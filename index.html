@@ -477,7 +477,10 @@
       document.getElementById("compress-img-out").src = url;
       document.getElementById("compress-download").href = url;
       document.getElementById("compress-result").style.display = "block";
-      status.textContent = "✓ Done!";
+      const originalKB = (file.size / 1024).toFixed(1);
+      const newKB = (data.result_b64.length * 0.75 / 1024).toFixed(1);
+      const saving = (((file.size - newKB * 1024) / file.size) * 100).toFixed(0);
+      status.textContent = `✓ Done! ${originalKB}KB → ${newKB}KB (saved ${saving}%)`;
     } catch(e) { status.textContent = "Something went wrong."; }
   }
 
@@ -559,7 +562,10 @@
       const url = b64ToUrl(data.result_b64, "pdf");
       document.getElementById("compress-pdf-download").href = url;
       document.getElementById("compress-pdf-result").style.display = "block";
-      status.textContent = "✓ Done!";
+      const originalKB = (file.size / 1024).toFixed(1);
+      const newKB = (data.result_b64.length * 0.75 / 1024).toFixed(1);
+      const saving = (((file.size - newKB * 1024) / file.size) * 100).toFixed(0);
+      status.textContent = `✓ Done! ${originalKB}KB → ${newKB}KB (saved ${saving}%)`;
     } catch(e) { status.textContent = "Something went wrong."; }
   }
 
