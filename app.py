@@ -14,7 +14,7 @@ app = Flask(__name__, static_folder=".")
 CORS(app)
 
 MODEL_PATH = "/tmp/realesrgan_x4.onnx"
-MODEL_URL = "https://github.com/Juvenal-Yescas/real-esrgan-onnx/raw/main/models/RealESRGAN_x4plus.onnx"
+MODEL_URL = "https://huggingface.co/bukuroo/RealESRGAN-ONNX/resolve/main/real-esrgan-x4plus-128.onnx"
 
 
 def download_model():
