@@ -14,7 +14,7 @@ app = Flask(__name__, static_folder=".")
 CORS(app)
 
 MODEL_PATH = "/tmp/realesrgan_x4.onnx"
-MODEL_URL = "https://github.com/facefusion/facefusion-assets/releases/download/models/real_esrgan_x4.onnx"
+MODEL_URL = "https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x4.onnx"
 
 def download_model():
     if not os.path.exists(MODEL_PATH):
