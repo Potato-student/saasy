@@ -7,12 +7,6 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .upload-box.dragover {
-  border-color: #a78bfa;
-  background: #a78bfa15;
-  transform: scale(1.01);
-}
-
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #080810;
@@ -69,7 +63,6 @@
     }
     .hero p { color: #888; font-size: 1rem; }
 
-    /* TABS */
     .tabs {
       display: flex;
       justify-content: center;
@@ -94,7 +87,6 @@
       color: #a78bfa;
     }
 
-    /* TOOL PANELS */
     .tools { max-width: 640px; margin: 0 auto; padding: 30px 20px 80px; }
     .tool-panel { display: none; }
     .tool-panel.active { display: block; }
@@ -106,17 +98,9 @@
       padding: 30px;
       margin-bottom: 20px;
     }
-    .tool-card h2 {
-      font-size: 1.1rem;
-      margin-bottom: 6px;
-    }
-    .tool-card p {
-      color: #666;
-      font-size: 0.85rem;
-      margin-bottom: 20px;
-    }
+    .tool-card h2 { font-size: 1.1rem; margin-bottom: 6px; }
+    .tool-card p { color: #666; font-size: 0.85rem; margin-bottom: 20px; }
 
-    /* UPLOAD BOX */
     .upload-box {
       border: 2px dashed #333;
       border-radius: 14px;
@@ -127,13 +111,17 @@
       margin-bottom: 16px;
     }
     .upload-box:hover { border-color: #a78bfa; background: #a78bfa08; }
+    .upload-box.dragover {
+      border-color: #a78bfa;
+      background: #a78bfa15;
+      transform: scale(1.01);
+    }
     .upload-box input { display: none; }
     .upload-box label { cursor: pointer; display: block; }
     .upload-box .icon { font-size: 2rem; margin-bottom: 8px; }
     .upload-box h3 { font-size: 0.95rem; margin-bottom: 4px; }
     .upload-box p { font-size: 0.8rem; color: #555; margin: 0; }
 
-    /* INPUTS */
     .input-row {
       display: flex;
       gap: 10px;
@@ -151,10 +139,7 @@
       flex: 1;
     }
 
-    /* SLIDER */
-    .slider-row {
-      margin-bottom: 14px;
-    }
+    .slider-row { margin-bottom: 14px; }
     .slider-row label {
       display: flex;
       justify-content: space-between;
@@ -162,12 +147,8 @@
       font-size: 0.85rem;
       margin-bottom: 8px;
     }
-    input[type="range"] {
-      width: 100%;
-      accent-color: #a78bfa;
-    }
+    input[type="range"] { width: 100%; accent-color: #a78bfa; }
 
-    /* BUTTONS */
     .btn {
       width: 100%;
       padding: 14px;
@@ -183,6 +164,23 @@
     }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+    .progress-bar-wrap {
+      width: 100%;
+      background: #1a1a2e;
+      border-radius: 20px;
+      height: 8px;
+      margin-top: 12px;
+      display: none;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 20px;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      transition: width 0.3s ease;
+    }
+
     .status {
       text-align: center;
       margin-top: 12px;
@@ -191,7 +189,6 @@
       min-height: 18px;
     }
 
-    /* RESULT */
     .result-box {
       display: none;
       margin-top: 20px;
@@ -216,7 +213,6 @@
     }
     .download-btn:hover { background: #22c55e30; }
 
-    /* FEATURES */
     .features {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -256,15 +252,14 @@
   <p>Images, PDFs — compress, convert, resize, merge. All free, no watermarks.</p>
 </div>
 
-<!-- TABS -->
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('compress-img')">🗜️ Compress Image</button>
-  <button class="tab" onclick="switchTab('resize-img')">📐 Resize Image</button>
-  <button class="tab" onclick="switchTab('convert-img')">🔄 Convert Image</button>
-  <button class="tab" onclick="switchTab('merge-pdf')">📄 Merge PDF</button>
-  <button class="tab" onclick="switchTab('compress-pdf')">🗜️ Compress PDF</button>
-  <button class="tab" onclick="switchTab('split-pdf')">✂️ Split PDF</button>
-  <button class="tab" onclick="switchTab('crop-img')">✂️ Crop Image</button>
+  <button class="tab active" onclick="switchTab('compress-img', this)">🗜️ Compress Image</button>
+  <button class="tab" onclick="switchTab('resize-img', this)">📐 Resize Image</button>
+  <button class="tab" onclick="switchTab('convert-img', this)">🔄 Convert Image</button>
+  <button class="tab" onclick="switchTab('crop-img', this)">✂️ Crop Image</button>
+  <button class="tab" onclick="switchTab('merge-pdf', this)">📄 Merge PDF</button>
+  <button class="tab" onclick="switchTab('compress-pdf', this)">🗜️ Compress PDF</button>
+  <button class="tab" onclick="switchTab('split-pdf', this)">✂️ Split PDF</button>
 </div>
 
 <div class="tools">
@@ -277,7 +272,7 @@
       <div class="upload-box">
         <label for="compress-input">
           <div class="icon">🖼️</div>
-          <h3>Click to choose image</h3>
+          <h3>Click or drag image here</h3>
           <p>JPG, PNG supported</p>
           <input type="file" id="compress-input" accept="image/*"/>
         </label>
@@ -290,7 +285,10 @@
         <input type="range" id="quality-slider" min="10" max="95" value="70"
           oninput="document.getElementById('quality-val').textContent = this.value + '%'"/>
       </div>
-      <button class="btn" id="compress-btn" onclick="compressImage()">✦ Compress Image</button>
+      <button class="btn" onclick="compressImage()">✦ Compress Image</button>
+      <div class="progress-bar-wrap" id="compress-progress-wrap">
+        <div class="progress-bar" id="compress-progress"></div>
+      </div>
       <p class="status" id="compress-status"></p>
       <div class="result-box" id="compress-result">
         <img class="result-img" id="compress-img-out" alt="Compressed"/>
@@ -308,7 +306,7 @@
       <div class="upload-box">
         <label for="resize-input">
           <div class="icon">🖼️</div>
-          <h3>Click to choose image</h3>
+          <h3>Click or drag image here</h3>
           <p>JPG, PNG supported</p>
           <input type="file" id="resize-input" accept="image/*"/>
         </label>
@@ -320,6 +318,9 @@
         <input type="number" id="resize-height" value="600" min="1" max="5000"/>
       </div>
       <button class="btn" onclick="resizeImage()">✦ Resize Image</button>
+      <div class="progress-bar-wrap" id="resize-progress-wrap">
+        <div class="progress-bar" id="resize-progress"></div>
+      </div>
       <p class="status" id="resize-status"></p>
       <div class="result-box" id="resize-result">
         <img class="result-img" id="resize-img-out" alt="Resized"/>
@@ -337,7 +338,7 @@
       <div class="upload-box">
         <label for="convert-input">
           <div class="icon">🖼️</div>
-          <h3>Click to choose image</h3>
+          <h3>Click or drag image here</h3>
           <p>JPG, PNG, WEBP supported</p>
           <input type="file" id="convert-input" accept="image/*"/>
         </label>
@@ -351,6 +352,9 @@
         </select>
       </div>
       <button class="btn" onclick="convertImage()">✦ Convert Image</button>
+      <div class="progress-bar-wrap" id="convert-progress-wrap">
+        <div class="progress-bar" id="convert-progress"></div>
+      </div>
       <p class="status" id="convert-status"></p>
       <div class="result-box" id="convert-result">
         <img class="result-img" id="convert-img-out" alt="Converted"/>
@@ -360,20 +364,63 @@
     </div>
   </div>
 
+  <!-- CROP IMAGE -->
+  <div class="tool-panel" id="panel-crop-img">
+    <div class="tool-card">
+      <h2>✂️ Crop Image</h2>
+      <p>Cut out any part of your image by entering the crop area coordinates.</p>
+      <div class="upload-box">
+        <label for="crop-input">
+          <div class="icon">🖼️</div>
+          <h3>Click or drag image here</h3>
+          <p>JPG, PNG supported</p>
+          <input type="file" id="crop-input" accept="image/*" onchange="previewCropImage(this)"/>
+        </label>
+      </div>
+      <img id="crop-preview" style="width:100%;border-radius:12px;margin-bottom:16px;display:none;" alt="Preview"/>
+      <p id="crop-dimensions" style="color:#666;font-size:0.8rem;margin-bottom:12px;"></p>
+      <div class="input-row">
+        <label>X (px)</label>
+        <input type="number" id="crop-x" value="0" min="0"/>
+        <label>Y (px)</label>
+        <input type="number" id="crop-y" value="0" min="0"/>
+      </div>
+      <div class="input-row">
+        <label>Width (px)</label>
+        <input type="number" id="crop-width" value="200" min="1"/>
+        <label>Height (px)</label>
+        <input type="number" id="crop-height" value="200" min="1"/>
+      </div>
+      <button class="btn" onclick="cropImage()">✂️ Crop Image</button>
+      <div class="progress-bar-wrap" id="crop-progress-wrap">
+        <div class="progress-bar" id="crop-progress"></div>
+      </div>
+      <p class="status" id="crop-status"></p>
+      <div class="result-box" id="crop-result">
+        <img class="result-img" id="crop-img-out" alt="Cropped"/>
+        <br/>
+        <a class="download-btn" id="crop-download" href="#" download="cropped.png">⬇ Download</a>
+      </div>
+    </div>
+  </div>
+
   <!-- MERGE PDF -->
   <div class="tool-panel" id="panel-merge-pdf">
     <div class="tool-card">
       <h2>📄 Merge PDF</h2>
-      <p>Combine multiple PDF files into one document.</p>
+      <p>Combine multiple PDF files into one. Hold Ctrl (or Cmd on Mac) to select multiple files.</p>
       <div class="upload-box">
         <label for="merge-input">
           <div class="icon">📄</div>
-          <h3>Click to choose PDFs</h3>
+          <h3>Click or drag PDFs here</h3>
           <p>Select multiple PDF files</p>
           <input type="file" id="merge-input" accept=".pdf" multiple/>
         </label>
       </div>
       <button class="btn" onclick="mergePDF()">✦ Merge PDFs</button>
+      <div class="progress-bar-wrap" id="merge-progress-wrap">
+        <div class="progress-bar" id="merge-progress"></div>
+      </div>
       <p class="status" id="merge-status"></p>
       <div class="result-box" id="merge-result">
         <a class="download-btn" id="merge-download" href="#" download="merged.pdf">⬇ Download Merged PDF</a>
@@ -389,12 +436,15 @@
       <div class="upload-box">
         <label for="compress-pdf-input">
           <div class="icon">📄</div>
-          <h3>Click to choose PDF</h3>
+          <h3>Click or drag PDF here</h3>
           <p>PDF files only</p>
           <input type="file" id="compress-pdf-input" accept=".pdf"/>
         </label>
       </div>
       <button class="btn" onclick="compressPDF()">✦ Compress PDF</button>
+      <div class="progress-bar-wrap" id="compress-pdf-progress-wrap">
+        <div class="progress-bar" id="compress-pdf-progress"></div>
+      </div>
       <p class="status" id="compress-pdf-status"></p>
       <div class="result-box" id="compress-pdf-result">
         <a class="download-btn" id="compress-pdf-download" href="#" download="compressed.pdf">⬇ Download Compressed PDF</a>
@@ -410,7 +460,7 @@
       <div class="upload-box">
         <label for="split-input">
           <div class="icon">📄</div>
-          <h3>Click to choose PDF</h3>
+          <h3>Click or drag PDF here</h3>
           <p>PDF files only</p>
           <input type="file" id="split-input" accept=".pdf"/>
         </label>
@@ -420,48 +470,12 @@
         <input type="number" id="split-page" value="1" min="1"/>
       </div>
       <button class="btn" onclick="splitPDF()">✦ Extract Page</button>
+      <div class="progress-bar-wrap" id="split-progress-wrap">
+        <div class="progress-bar" id="split-progress"></div>
+      </div>
       <p class="status" id="split-status"></p>
       <div class="result-box" id="split-result">
         <a class="download-btn" id="split-download" href="#" download="page.pdf">⬇ Download Page</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- CROP IMAGE -->
-  <div class="tool-panel" id="panel-crop-img">
-    <div class="tool-card">
-      <h2>✂️ Crop Image</h2>
-      <p>Cut out any part of your image by entering the crop area coordinates.</p>
-      <div class="upload-box">
-        <label for="crop-input">
-          <div class="icon">🖼️</div>
-          <h3>Click to choose image</h3>
-          <p>JPG, PNG supported</p>
-          <input type="file" id="crop-input" accept="image/*" onchange="previewCropImage(this)"/>
-        </label>
-      </div>
-
-      <img id="crop-preview" style="width:100%;border-radius:12px;margin-bottom:16px;display:none;" alt="Preview"/>
-      <p id="crop-dimensions" style="color:#666;font-size:0.8rem;margin-bottom:12px;"></p>
-
-      <div class="input-row">
-        <label>X (px)</label>
-        <input type="number" id="crop-x" value="0" min="0"/>
-        <label>Y (px)</label>
-        <input type="number" id="crop-y" value="0" min="0"/>
-      </div>
-      <div class="input-row">
-        <label>Width (px)</label>
-        <input type="number" id="crop-width" value="200" min="1"/>
-        <label>Height (px)</label>
-        <input type="number" id="crop-height" value="200" min="1"/>
-      </div>
-      <button class="btn" onclick="cropImage()">✂️ Crop Image</button>
-      <p class="status" id="crop-status"></p>
-      <div class="result-box" id="crop-result">
-        <img class="result-img" id="crop-img-out" alt="Cropped"/>
-        <br/>
-        <a class="download-btn" id="crop-download" href="#" download="cropped.png">⬇ Download</a>
       </div>
     </div>
   </div>
@@ -495,10 +509,10 @@
 <footer>Made with ❤️ — SaaSy File Toolkit</footer>
 
 <script>
-  function switchTab(id) {
+  function switchTab(id, el) {
     document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
     document.querySelectorAll(".tool-panel").forEach(p => p.classList.remove("active"));
-    event.target.classList.add("active");
+    el.classList.add("active");
     document.getElementById("panel-" + id).classList.add("active");
   }
 
@@ -506,18 +520,64 @@
     return `data:${fmt === "pdf" ? "application/pdf" : "image/" + fmt};base64,` + b64;
   }
 
+  function showProgress(id) {
+    const wrap = document.getElementById(id + "-progress-wrap");
+    const bar = document.getElementById(id + "-progress");
+    if (!wrap || !bar) return null;
+    wrap.style.display = "block";
+    bar.style.width = "0%";
+    let width = 0;
+    const interval = setInterval(() => {
+      if (width >= 90) return clearInterval(interval);
+      width += Math.random() * 15;
+      bar.style.width = Math.min(width, 90) + "%";
+    }, 300);
+    return { interval, bar, wrap };
+  }
+
+  function doneProgress(progress) {
+    if (!progress) return;
+    clearInterval(progress.interval);
+    progress.bar.style.width = "100%";
+    setTimeout(() => {
+      progress.wrap.style.display = "none";
+      progress.bar.style.width = "0%";
+    }, 600);
+  }
+
+  // Drag and drop for all upload boxes
+  document.querySelectorAll(".upload-box").forEach(box => {
+    box.addEventListener("dragover", e => { e.preventDefault(); box.classList.add("dragover"); });
+    box.addEventListener("dragleave", () => box.classList.remove("dragover"));
+    box.addEventListener("drop", e => {
+      e.preventDefault();
+      box.classList.remove("dragover");
+      const input = box.querySelector("input[type='file']");
+      const files = e.dataTransfer.files;
+      if (!files.length) return;
+      const dt = new DataTransfer();
+      for (const f of files) dt.items.add(f);
+      input.files = dt.files;
+      const h3 = box.querySelector("h3");
+      h3.textContent = files.length === 1 ? "✓ " + files[0].name : "✓ " + files.length + " files selected";
+      if (input.onchange) input.onchange({ target: input });
+    });
+  });
+
   async function compressImage() {
     const file = document.getElementById("compress-input").files[0];
     if (!file) return alert("Please choose an image first!");
     const quality = document.getElementById("quality-slider").value;
     const status = document.getElementById("compress-status");
     status.textContent = "⏳ Compressing...";
+    const progress = showProgress("compress");
     const form = new FormData();
     form.append("image", file);
     form.append("quality", quality);
     try {
       const res = await fetch("/compress", { method: "POST", body: form });
       const data = await res.json();
+      doneProgress(progress);
       if (data.error) return status.textContent = "Error: " + data.error;
       const url = b64ToUrl(data.result_b64, data.format);
       document.getElementById("compress-img-out").src = url;
@@ -527,7 +587,7 @@
       const newKB = (data.result_b64.length * 0.75 / 1024).toFixed(1);
       const saving = (((file.size - newKB * 1024) / file.size) * 100).toFixed(0);
       status.textContent = `✓ Done! ${originalKB}KB → ${newKB}KB (saved ${saving}%)`;
-    } catch(e) { status.textContent = "Something went wrong."; }
+    } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
   }
 
   async function resizeImage() {
@@ -537,6 +597,7 @@
     const h = document.getElementById("resize-height").value;
     const status = document.getElementById("resize-status");
     status.textContent = "⏳ Resizing...";
+    const progress = showProgress("resize");
     const form = new FormData();
     form.append("image", file);
     form.append("width", w);
@@ -544,13 +605,14 @@
     try {
       const res = await fetch("/resize", { method: "POST", body: form });
       const data = await res.json();
+      doneProgress(progress);
       if (data.error) return status.textContent = "Error: " + data.error;
       const url = b64ToUrl(data.result_b64, data.format);
       document.getElementById("resize-img-out").src = url;
       document.getElementById("resize-download").href = url;
       document.getElementById("resize-result").style.display = "block";
       status.textContent = "✓ Done!";
-    } catch(e) { status.textContent = "Something went wrong."; }
+    } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
   }
 
   async function convertImage() {
@@ -559,12 +621,14 @@
     const fmt = document.getElementById("convert-format").value;
     const status = document.getElementById("convert-status");
     status.textContent = "⏳ Converting...";
+    const progress = showProgress("convert");
     const form = new FormData();
     form.append("image", file);
     form.append("format", fmt);
     try {
       const res = await fetch("/convert", { method: "POST", body: form });
       const data = await res.json();
+      doneProgress(progress);
       if (data.error) return status.textContent = "Error: " + data.error;
       const url = b64ToUrl(data.result_b64, fmt);
       document.getElementById("convert-img-out").src = url;
@@ -573,110 +637,18 @@
       dl.download = "converted." + fmt;
       document.getElementById("convert-result").style.display = "block";
       status.textContent = "✓ Done!";
-    } catch(e) { status.textContent = "Something went wrong."; }
+    } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
   }
 
-  async function mergePDF() {
-    const files = document.getElementById("merge-input").files;
-   if (files.length < 2) return alert("Hold Ctrl (or Cmd on Mac) while clicking to select multiple PDF files at once!");
-    const status = document.getElementById("merge-status");
-    status.textContent = "⏳ Merging...";
-    const form = new FormData();
-    for (const f of files) form.append("pdfs", f);
-    try {
-      const res = await fetch("/merge-pdf", { method: "POST", body: form });
-      const data = await res.json();
-      if (data.error) return status.textContent = "Error: " + data.error;
-      const url = b64ToUrl(data.result_b64, "pdf");
-      document.getElementById("merge-download").href = url;
-      document.getElementById("merge-result").style.display = "block";
-      status.textContent = "✓ Done!";
-    } catch(e) { status.textContent = "Something went wrong."; }
-  }
-
-  async function compressPDF() {
-    const file = document.getElementById("compress-pdf-input").files[0];
-    if (!file) return alert("Please choose a PDF first!");
-    const status = document.getElementById("compress-pdf-status");
-    status.textContent = "⏳ Compressing...";
-    const form = new FormData();
-    form.append("pdf", file);
-    try {
-      const res = await fetch("/compress-pdf", { method: "POST", body: form });
-      const data = await res.json();
-      if (data.error) return status.textContent = "Error: " + data.error;
-      const url = b64ToUrl(data.result_b64, "pdf");
-      document.getElementById("compress-pdf-download").href = url;
-      document.getElementById("compress-pdf-result").style.display = "block";
-      const originalKB = (file.size / 1024).toFixed(1);
-      const newKB = (data.result_b64.length * 0.75 / 1024).toFixed(1);
-      const saving = (((file.size - newKB * 1024) / file.size) * 100).toFixed(0);
-      status.textContent = `✓ Done! ${originalKB}KB → ${newKB}KB (saved ${saving}%)`;
-    } catch(e) { status.textContent = "Something went wrong."; }
-  }
-
-  async function splitPDF() {
-    const file = document.getElementById("split-input").files[0];
-    if (!file) return alert("Please choose a PDF first!");
-    const page = document.getElementById("split-page").value;
-    const status = document.getElementById("split-status");
-    status.textContent = "⏳ Extracting page...";
-    const form = new FormData();
-    form.append("pdf", file);
-    form.append("page", page);
-    try {
-      const res = await fetch("/split-pdf", { method: "POST", body: form });
-      const data = await res.json();
-      if (data.error) return status.textContent = "Error: " + data.error;
-      const url = b64ToUrl(data.result_b64, "pdf");
-      const dl = document.getElementById("split-download");
-      dl.href = url;
-      dl.download = `page-${page}.pdf`;
-      document.getElementById("split-result").style.display = "block";
-      status.textContent = `✓ Done! PDF has ${data.total_pages} pages total.`;
-    } catch(e) { status.textContent = "Something went wrong."; }
-  }
-
-  // Drag and drop for all upload boxes
-document.querySelectorAll(".upload-box").forEach(box => {
-  box.addEventListener("dragover", e => {
-    e.preventDefault();
-    box.classList.add("dragover");
-  });
-  box.addEventListener("dragleave", () => box.classList.remove("dragover"));
-  box.addEventListener("drop", e => {
-    e.preventDefault();
-    box.classList.remove("dragover");
-    const input = box.querySelector("input[type='file']");
-    const files = e.dataTransfer.files;
-    if (!files.length) return;
-
-    // Set files on the input
-    const dt = new DataTransfer();
-    for (const f of files) dt.items.add(f);
-    input.files = dt.files;
-
-    // Show filename feedback
-    const h3 = box.querySelector("h3");
-    if (files.length === 1) {
-      h3.textContent = "✓ " + files[0].name;
-    } else {
-      h3.textContent = "✓ " + files.length + " files selected";
-    }
-  });
-});
-
-function previewCropImage(input) {
+  function previewCropImage(input) {
     const file = input.files[0];
     if (!file) return;
     const preview = document.getElementById("crop-preview");
-    const dimensions = document.getElementById("crop-dimensions");
     preview.src = URL.createObjectURL(file);
     preview.style.display = "block";
-
     const img = new Image();
     img.onload = () => {
-      dimensions.textContent = `Image size: ${img.width}px × ${img.height}px`;
+      document.getElementById("crop-dimensions").textContent = `Image size: ${img.width}px × ${img.height}px`;
       document.getElementById("crop-width").value = Math.floor(img.width / 2);
       document.getElementById("crop-height").value = Math.floor(img.height / 2);
     };
@@ -686,30 +658,94 @@ function previewCropImage(input) {
   async function cropImage() {
     const file = document.getElementById("crop-input").files[0];
     if (!file) return alert("Please choose an image first!");
-    const x = document.getElementById("crop-x").value;
-    const y = document.getElementById("crop-y").value;
-    const width = document.getElementById("crop-width").value;
-    const height = document.getElementById("crop-height").value;
     const status = document.getElementById("crop-status");
     status.textContent = "⏳ Cropping...";
+    const progress = showProgress("crop");
     const form = new FormData();
     form.append("image", file);
-    form.append("x", x);
-    form.append("y", y);
-    form.append("width", width);
-    form.append("height", height);
+    form.append("x", document.getElementById("crop-x").value);
+    form.append("y", document.getElementById("crop-y").value);
+    form.append("width", document.getElementById("crop-width").value);
+    form.append("height", document.getElementById("crop-height").value);
     try {
       const res = await fetch("/crop", { method: "POST", body: form });
       const data = await res.json();
+      doneProgress(progress);
       if (data.error) return status.textContent = "Error: " + data.error;
       const url = b64ToUrl(data.result_b64, "png");
       document.getElementById("crop-img-out").src = url;
       document.getElementById("crop-download").href = url;
       document.getElementById("crop-result").style.display = "block";
       status.textContent = "✓ Done!";
-    } catch(e) { status.textContent = "Something went wrong."; }
+    } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
   }
-  
+
+  async function mergePDF() {
+    const files = document.getElementById("merge-input").files;
+    if (files.length < 2) return alert("Hold Ctrl (or Cmd on Mac) while clicking to select multiple PDF files at once!");
+    const status = document.getElementById("merge-status");
+    status.textContent = "⏳ Merging...";
+    const progress = showProgress("merge");
+    const form = new FormData();
+    for (const f of files) form.append("pdfs", f);
+    try {
+      const res = await fetch("/merge-pdf", { method: "POST", body: form });
+      const data = await res.json();
+      doneProgress(progress);
+      if (data.error) return status.textContent = "Error: " + data.error;
+      const url = b64ToUrl(data.result_b64, "pdf");
+      document.getElementById("merge-download").href = url;
+      document.getElementById("merge-result").style.display = "block";
+      status.textContent = "✓ Done!";
+    } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
+  }
+
+  async function compressPDF() {
+    const file = document.getElementById("compress-pdf-input").files[0];
+    if (!file) return alert("Please choose a PDF first!");
+    const status = document.getElementById("compress-pdf-status");
+    status.textContent = "⏳ Compressing...";
+    const progress = showProgress("compress-pdf");
+    const form = new FormData();
+    form.append("pdf", file);
+    try {
+      const res = await fetch("/compress-pdf", { method: "POST", body: form });
+      const data = await res.json();
+      doneProgress(progress);
+      if (data.error) return status.textContent = "Error: " + data.error;
+      const url = b64ToUrl(data.result_b64, "pdf");
+      document.getElementById("compress-pdf-download").href = url;
+      document.getElementById("compress-pdf-result").style.display = "block";
+      const originalKB = (file.size / 1024).toFixed(1);
+      const newKB = (data.result_b64.length * 0.75 / 1024).toFixed(1);
+      const saving = (((file.size - newKB * 1024) / file.size) * 100).toFixed(0);
+      status.textContent = `✓ Done! ${originalKB}KB → ${newKB}KB (saved ${saving}%)`;
+    } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
+  }
+
+  async function splitPDF() {
+    const file = document.getElementById("split-input").files[0];
+    if (!file) return alert("Please choose a PDF first!");
+    const page = document.getElementById("split-page").value;
+    const status = document.getElementById("split-status");
+    status.textContent = "⏳ Extracting page...";
+    const progress = showProgress("split");
+    const form = new FormData();
+    form.append("pdf", file);
+    form.append("page", page);
+    try {
+      const res = await fetch("/split-pdf", { method: "POST", body: form });
+      const data = await res.json();
+      doneProgress(progress);
+      if (data.error) return status.textContent = "Error: " + data.error;
+      const url = b64ToUrl(data.result_b64, "pdf");
+      const dl = document.getElementById("split-download");
+      dl.href = url;
+      dl.download = `page-${page}.pdf`;
+      document.getElementById("split-result").style.display = "block";
+      status.textContent = `✓ Done! PDF has ${data.total_pages} pages total.`;
+    } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
+  }
 </script>
 
 </body>
