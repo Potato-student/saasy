@@ -3,96 +3,309 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Image Upscaler</title>
+  <title>SaaSy — Free AI Image Upscaler</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: sans-serif;
-      background: #0f0f0f;
+      font-family: 'Segoe UI', sans-serif;
+      background: #080810;
       color: #fff;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
     }
-    h1 { font-size: 2rem; margin-bottom: 8px; }
-    p.sub { color: #aaa; margin-bottom: 32px; }
-    .upload-box {
-      border: 2px dashed #444;
-      border-radius: 16px;
-      padding: 40px;
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-bottom: 1px solid #ffffff10;
+    }
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-badge {
+      background: #ffffff10;
+      border: 1px solid #ffffff20;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: #aaa;
+    }
+
+    /* HERO */
+    .hero {
       text-align: center;
-      width: 100%;
-      max-width: 480px;
+      padding: 80px 20px 40px;
+    }
+    .hero-tag {
+      display: inline-block;
+      background: #a78bfa20;
+      border: 1px solid #a78bfa40;
+      color: #a78bfa;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      color: #888;
+      font-size: 1.1rem;
+      max-width: 500px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    /* UPLOAD AREA */
+    .upload-container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+    .upload-box {
+      border: 2px dashed #333;
+      border-radius: 20px;
+      padding: 50px 30px;
+      text-align: center;
       cursor: pointer;
+      transition: border-color 0.3s, background 0.3s;
+      background: #0d0d1a;
+    }
+    .upload-box:hover {
+      border-color: #a78bfa;
+      background: #a78bfa08;
     }
     .upload-box input { display: none; }
     .upload-box label { cursor: pointer; display: block; }
+    .upload-icon {
+      width: 56px;
+      height: 56px;
+      background: #a78bfa20;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 1.6rem;
+    }
+    .upload-box h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .upload-box p { color: #555; font-size: 0.85rem; }
+
+    /* PREVIEW */
     #preview {
-      margin-top: 20px;
-      max-width: 480px;
       width: 100%;
-      border-radius: 12px;
+      border-radius: 16px;
+      margin-top: 20px;
+      display: none;
+      border: 1px solid #ffffff10;
+    }
+
+    /* CONTROLS */
+    .controls {
+      display: none;
+      margin-top: 20px;
+      gap: 12px;
+      align-items: center;
+    }
+    .controls.visible { display: flex; }
+
+    .scale-label { color: #888; font-size: 0.9rem; white-space: nowrap; }
+
+    .scale-buttons {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+    }
+    .scale-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      background: #0d0d1a;
+      color: #888;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .scale-btn.active {
+      border-color: #a78bfa;
+      background: #a78bfa20;
+      color: #a78bfa;
+    }
+
+    /* BUTTON */
+    #upscale-btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
       display: none;
     }
-    button {
-      margin-top: 20px;
-      background: #6c47ff;
-      color: white;
-      border: none;
-      padding: 14px 40px;
-      border-radius: 10px;
-      font-size: 1rem;
-      cursor: pointer;
+    #upscale-btn.visible { display: block; }
+    #upscale-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* STATUS */
+    #status {
+      text-align: center;
+      margin-top: 12px;
+      color: #888;
+      font-size: 0.9rem;
+      min-height: 20px;
     }
-    button:disabled { background: #444; cursor: not-allowed; }
-    #status { margin-top: 16px; color: #aaa; font-size: 0.9rem; }
-    #result-section { margin-top: 32px; text-align: center; display: none; }
-    #result-section h2 { margin-bottom: 12px; }
-    #result-img { max-width: 480px; width: 100%; border-radius: 12px; }
-    #download-btn {
-      display: inline-block;
-      margin-top: 16px;
-      background: #22c55e;
-      color: white;
-      padding: 12px 32px;
-      border-radius: 10px;
-      text-decoration: none;
+
+    /* RESULT */
+    #result-section {
+      display: none;
+      margin-top: 32px;
+    }
+    #result-section h2 {
       font-size: 1rem;
+      color: #888;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    #result-img {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid #ffffff10;
+    }
+    #download-btn {
+      display: block;
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #22c55e20;
+      border: 1px solid #22c55e40;
+      color: #22c55e;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+    #download-btn:hover { background: #22c55e30; }
+
+    /* FEATURES */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 40px;
+    }
+    .feature-card {
+      background: #0d0d1a;
+      border: 1px solid #ffffff08;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+    .feature-icon { font-size: 1.5rem; margin-bottom: 10px; }
+    .feature-card h4 { font-size: 0.9rem; margin-bottom: 6px; }
+    .feature-card p { font-size: 0.75rem; color: #555; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #333;
+      font-size: 0.8rem;
+      border-top: 1px solid #ffffff08;
     }
   </style>
 </head>
 <body>
-  <h1>Image Upscaler</h1>
-  <p class="sub">Upload any image and we'll make it 2x bigger and sharper</p>
 
-  <div class="upload-box">
-    <label for="file-input">
-      <p>Click here to choose an image</p>
-      <p style="color:#aaa;font-size:0.85rem;margin-top:8px;">JPG, PNG supported</p>
-      <input type="file" id="file-input" accept="image/*"/>
-    </label>
+  <nav>
+    <div class="logo">SaaSy ✦</div>
+    <div class="nav-badge">100% Free — No signup needed</div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-tag">✦ Free Image Upscaler</div>
+    <h1>Make your images<br/><span>crisp and sharp</span></h1>
+    <p>Upload any image and instantly upscale it up to 8x. No account, no watermark, completely free.</p>
   </div>
 
-  <img id="preview" alt="Preview"/>
- <div style="margin-top:20px; display:flex; gap:12px; justify-content:center;">
-    <label style="color:#aaa; align-self:center;">Scale:</label>
-    <select id="scale-select" style="background:#1a1a1a; color:#fff; border:1px solid #444; padding:8px 16px; border-radius:8px; font-size:1rem;">
-      <option value="2">2x</option>
-      <option value="4">4x</option>
-      <option value="8">8x</option>
-    </select>
-  </div>
-  <button id="upscale-btn" disabled>Upscale Image</button>
-  <p id="status"></p>
+  <div class="upload-container">
+    <div class="upload-box" id="drop-zone">
+      <label for="file-input">
+        <div class="upload-icon">🖼️</div>
+        <h3>Drop your image here</h3>
+        <p>or click to browse — JPG, PNG supported</p>
+        <input type="file" id="file-input" accept="image/*"/>
+      </label>
+    </div>
 
-  <div id="result-section">
-    <h2>Your upscaled image</h2>
-    <img id="result-img" alt="Upscaled result"/>
-    <br/>
-    <a id="download-btn" href="#" download="upscaled.png">Download</a>
+    <img id="preview" alt="Preview"/>
+
+    <div class="controls" id="controls">
+      <span class="scale-label">Scale:</span>
+      <div class="scale-buttons">
+        <button class="scale-btn active" data-scale="2">2x</button>
+        <button class="scale-btn" data-scale="4">4x</button>
+        <button class="scale-btn" data-scale="8">8x</button>
+      </div>
+    </div>
+
+    <button id="upscale-btn" disabled>✦ Upscale Image</button>
+    <p id="status"></p>
+
+    <div id="result-section">
+      <h2>Your upscaled image ✓</h2>
+      <img id="result-img" alt="Upscaled result"/>
+      <a id="download-btn" href="#" download="upscaled.png">⬇ Download Image</a>
+    </div>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h4>Fast processing</h4>
+        <p>Results in seconds</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h4>Private & secure</h4>
+        <p>Images are never stored</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💎</div>
+        <h4>No watermarks</h4>
+        <p>Clean output every time</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🆓</div>
+        <h4>Always free</h4>
+        <p>No signup required</p>
+      </div>
+    </div>
   </div>
+
+  <footer>
+    Made with ❤️ — SaaSy Image Upscaler
+  </footer>
 
   <script>
     const fileInput = document.getElementById("file-input");
@@ -102,12 +315,26 @@
     const resultSection = document.getElementById("result-section");
     const resultImg = document.getElementById("result-img");
     const downloadBtn = document.getElementById("download-btn");
+    const controls = document.getElementById("controls");
+    const scaleButtons = document.querySelectorAll(".scale-btn");
+
+    let selectedScale = 2;
+
+    scaleButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        scaleButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedScale = parseInt(btn.dataset.scale);
+      });
+    });
 
     fileInput.addEventListener("change", () => {
       const file = fileInput.files[0];
       if (!file) return;
       preview.src = URL.createObjectURL(file);
       preview.style.display = "block";
+      controls.classList.add("visible");
+      upscaleBtn.classList.add("visible");
       upscaleBtn.disabled = false;
       resultSection.style.display = "none";
       status.textContent = "";
@@ -118,10 +345,11 @@
       if (!file) return;
 
       upscaleBtn.disabled = true;
-      status.textContent = "Upscaling... please wait...";
+      status.textContent = "Upscaling your image... please wait ✦";
 
       const formData = new FormData();
       formData.append("image", file);
+      formData.append("scale", selectedScale);
 
       try {
         const response = await fetch("/upscale", {
@@ -136,16 +364,17 @@
           resultImg.src = imgSrc;
           downloadBtn.href = imgSrc;
           resultSection.style.display = "block";
-          status.textContent = "Done!";
+          status.textContent = "Done! Your image is ready ✓";
         } else {
           status.textContent = "Error: " + data.error;
         }
       } catch (err) {
-        status.textContent = "Something went wrong. Is the server running?";
+        status.textContent = "Something went wrong. Please try again.";
       }
 
       upscaleBtn.disabled = false;
     });
   </script>
+
 </body>
 </html>
