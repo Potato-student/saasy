@@ -16,7 +16,6 @@ CORS(app)
 MODEL_PATH = "/tmp/realesrgan_x4.onnx"
 MODEL_URL = "https://huggingface.co/bukuroo/RealESRGAN-ONNX/resolve/main/real-esrgan-x4plus-128.onnx"
 
-
 def download_model():
     if not os.path.exists(MODEL_PATH):
         print("Downloading AI model...", flush=True)
@@ -34,22 +33,54 @@ def upscale_with_ai(img):
 
     download_model()
 
-    # Prepare image
-    img_array = np.array(img).astype(np.float32) / 255.0
-    img_array = np.transpose(img_array, (2, 0, 1))  # HWC to CHW
-    img_array = np.expand_dims(img_array, axis=0)   # Add batch dimension
-
-    # Run AI model
     session = ort.InferenceSession(MODEL_PATH)
     input_name = session.get_inputs()[0].name
-    output = session.run(None, {input_name: img_array})[0]
 
-    # Convert back to image
-    output = np.squeeze(output, axis=0)
-    output = np.transpose(output, (1, 2, 0))  # CHW to HWC
-    output = np.clip(output * 255, 0, 255).astype(np.uint8)
+    TILE_SIZE = 128
+    img_width, img_height = img.size
 
-    return Image.fromarray(output)
+    # Calculate output size (4x upscale)
+    out_width = img_width * 4
+    out_height = img_height * 4
+    output = Image.new("RGB", (out_width, out_height))
+
+    # Process in 128x128 tiles
+    for y in range(0, img_height, TILE_SIZE):
+        for x in range(0, img_width, TILE_SIZE):
+            # Crop tile from input
+            x_end = min(x + TILE_SIZE, img_width)
+            y_end = min(y + TILE_SIZE, img_height)
+            tile = img.crop((x, y, x_end, y_end))
+
+            # Pad tile to exactly 128x128 if needed
+            if tile.size != (TILE_SIZE, TILE_SIZE):
+                padded = Image.new("RGB", (TILE_SIZE, TILE_SIZE), (0, 0, 0))
+                padded.paste(tile, (0, 0))
+                tile = padded
+
+            # Prepare for model
+            tile_array = np.array(tile).astype(np.float32) / 255.0
+            tile_array = np.transpose(tile_array, (2, 0, 1))
+            tile_array = np.expand_dims(tile_array, axis=0)
+
+            # Run AI
+            result = session.run(None, {input_name: tile_array})[0]
+
+            # Convert back
+            result = np.squeeze(result, axis=0)
+            result = np.transpose(result, (1, 2, 0))
+            result = np.clip(result * 255, 0, 255).astype(np.uint8)
+            result_tile = Image.fromarray(result)
+
+            # Crop result to match original tile size (remove padding)
+            actual_w = (x_end - x) * 4
+            actual_h = (y_end - y) * 4
+            result_tile = result_tile.crop((0, 0, actual_w, actual_h))
+
+            # Paste into output
+            output.paste(result_tile, (x * 4, y * 4))
+
+    return output
 
 @app.route("/")
 def index():
@@ -69,20 +100,14 @@ def upscale():
     try:
         img = Image.open(image_file).convert("RGB")
 
-        # AI upscale (always 4x from model)
+        # AI always does 4x
         result = upscale_with_ai(img)
 
-        # If user wants 2x, downscale from 4x result
-        # If user wants 8x, upscale further from 4x result
+        # Adjust to requested scale
         if scale == 2:
-            result = result.resize(
-                (img.width * 2, img.height * 2), Image.LANCZOS
-            )
+            result = result.resize((img.width * 2, img.height * 2), Image.LANCZOS)
         elif scale == 8:
-            result = result.resize(
-                (img.width * 8, img.height * 8), Image.LANCZOS
-            )
-        # scale == 4 is already perfect from the model
+            result = result.resize((img.width * 8, img.height * 8), Image.LANCZOS)
 
         buffer = io.BytesIO()
         result.save(buffer, format="PNG")
