@@ -14,13 +14,20 @@ app = Flask(__name__, static_folder=".")
 CORS(app)
 
 MODEL_PATH = "/tmp/realesrgan_x4.onnx"
-MODEL_URL = "https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x4.onnx"
+MODEL_URL = "https://github.com/Juvenal-Yescas/real-esrgan-onnx/raw/main/models/RealESRGAN_x4plus.onnx"
+
 
 def download_model():
     if not os.path.exists(MODEL_PATH):
-        print("Downloading AI model... this takes 30 seconds", flush=True)
-        urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
-        print("Model downloaded!", flush=True)
+        print("Downloading AI model...", flush=True)
+        try:
+            req = urllib.request.Request(MODEL_URL, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req) as response, open(MODEL_PATH, "wb") as out_file:
+                out_file.write(response.read())
+            print("Model downloaded!", flush=True)
+        except Exception as e:
+            print(f"Download failed: {e}", flush=True)
+            raise Exception(f"Model download failed: {e}")
 
 def upscale_with_ai(img):
     import onnxruntime as ort
