@@ -126,5 +126,32 @@ def split_pdf():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/crop", methods=["POST"])
+def crop():
+    try:
+        file = request.files["image"]
+        x = int(request.form.get("x", 0))
+        y = int(request.form.get("y", 0))
+        width = int(request.form.get("width", 100))
+        height = int(request.form.get("height", 100))
+
+        img = Image.open(file).convert("RGB")
+
+        # Make sure crop doesn't go outside image bounds
+        x = max(0, min(x, img.width))
+        y = max(0, min(y, img.height))
+        width = max(1, min(width, img.width - x))
+        height = max(1, min(height, img.height - y))
+
+        cropped = img.crop((x, y, x + width, y + height))
+
+        buffer = io.BytesIO()
+        cropped.save(buffer, format="PNG")
+        buffer.seek(0)
+        b64 = base64.b64encode(buffer.read()).decode("utf-8")
+        return jsonify({"result_b64": b64, "format": "png"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
