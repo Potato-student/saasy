@@ -1,3 +1,6 @@
 flask
 flask-cors
 Pillow
+numpy
+onnxruntime
+requests
