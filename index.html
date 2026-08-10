@@ -264,6 +264,7 @@
   <button class="tab" onclick="switchTab('merge-pdf')">📄 Merge PDF</button>
   <button class="tab" onclick="switchTab('compress-pdf')">🗜️ Compress PDF</button>
   <button class="tab" onclick="switchTab('split-pdf')">✂️ Split PDF</button>
+  <button class="tab" onclick="switchTab('crop-img')">✂️ Crop Image</button>
 </div>
 
 <div class="tools">
@@ -422,6 +423,45 @@
       <p class="status" id="split-status"></p>
       <div class="result-box" id="split-result">
         <a class="download-btn" id="split-download" href="#" download="page.pdf">⬇ Download Page</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CROP IMAGE -->
+  <div class="tool-panel" id="panel-crop-img">
+    <div class="tool-card">
+      <h2>✂️ Crop Image</h2>
+      <p>Cut out any part of your image by entering the crop area coordinates.</p>
+      <div class="upload-box">
+        <label for="crop-input">
+          <div class="icon">🖼️</div>
+          <h3>Click to choose image</h3>
+          <p>JPG, PNG supported</p>
+          <input type="file" id="crop-input" accept="image/*" onchange="previewCropImage(this)"/>
+        </label>
+      </div>
+
+      <img id="crop-preview" style="width:100%;border-radius:12px;margin-bottom:16px;display:none;" alt="Preview"/>
+      <p id="crop-dimensions" style="color:#666;font-size:0.8rem;margin-bottom:12px;"></p>
+
+      <div class="input-row">
+        <label>X (px)</label>
+        <input type="number" id="crop-x" value="0" min="0"/>
+        <label>Y (px)</label>
+        <input type="number" id="crop-y" value="0" min="0"/>
+      </div>
+      <div class="input-row">
+        <label>Width (px)</label>
+        <input type="number" id="crop-width" value="200" min="1"/>
+        <label>Height (px)</label>
+        <input type="number" id="crop-height" value="200" min="1"/>
+      </div>
+      <button class="btn" onclick="cropImage()">✂️ Crop Image</button>
+      <p class="status" id="crop-status"></p>
+      <div class="result-box" id="crop-result">
+        <img class="result-img" id="crop-img-out" alt="Cropped"/>
+        <br/>
+        <a class="download-btn" id="crop-download" href="#" download="cropped.png">⬇ Download</a>
       </div>
     </div>
   </div>
@@ -625,6 +665,50 @@ document.querySelectorAll(".upload-box").forEach(box => {
     }
   });
 });
+
+function previewCropImage(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const preview = document.getElementById("crop-preview");
+    const dimensions = document.getElementById("crop-dimensions");
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+
+    const img = new Image();
+    img.onload = () => {
+      dimensions.textContent = `Image size: ${img.width}px × ${img.height}px`;
+      document.getElementById("crop-width").value = Math.floor(img.width / 2);
+      document.getElementById("crop-height").value = Math.floor(img.height / 2);
+    };
+    img.src = preview.src;
+  }
+
+  async function cropImage() {
+    const file = document.getElementById("crop-input").files[0];
+    if (!file) return alert("Please choose an image first!");
+    const x = document.getElementById("crop-x").value;
+    const y = document.getElementById("crop-y").value;
+    const width = document.getElementById("crop-width").value;
+    const height = document.getElementById("crop-height").value;
+    const status = document.getElementById("crop-status");
+    status.textContent = "⏳ Cropping...";
+    const form = new FormData();
+    form.append("image", file);
+    form.append("x", x);
+    form.append("y", y);
+    form.append("width", width);
+    form.append("height", height);
+    try {
+      const res = await fetch("/crop", { method: "POST", body: form });
+      const data = await res.json();
+      if (data.error) return status.textContent = "Error: " + data.error;
+      const url = b64ToUrl(data.result_b64, "png");
+      document.getElementById("crop-img-out").src = url;
+      document.getElementById("crop-download").href = url;
+      document.getElementById("crop-result").style.display = "block";
+      status.textContent = "✓ Done!";
+    } catch(e) { status.textContent = "Something went wrong."; }
+  }
   
 </script>
 
