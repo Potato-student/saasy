@@ -8,6 +8,8 @@ import base64
 import io
 import os
 import fitz  # pymupdf
+import tempfile
+from pdf2docx import Converter
 
 app = Flask(__name__, static_folder=".")
 CORS(app)
@@ -223,6 +225,41 @@ def docx_to_pdf():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/pdf-to-docx", methods=["POST"])
+def pdf_to_docx():
+    try:
+        file = request.files.get("pdf")
+        if not file:
+            return jsonify({"error": "No PDF uploaded"}), 400
+
+        # Save uploaded PDF to a temp file
+        tmp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+        tmp_pdf.write(file.read())
+        tmp_pdf.close()
+
+        tmp_docx = tempfile.NamedTemporaryFile(delete=False, suffix=".docx")
+        tmp_docx.close()
+
+        # Convert PDF -> DOCX
+        cv = Converter(tmp_pdf.name)
+        cv.convert(tmp_docx.name, start=0, end=None)
+        cv.close()
+
+        # Read result and return base64
+        with open(tmp_docx.name, "rb") as f:
+            data = f.read()
+
+        # Cleanup
+        try:
+            os.remove(tmp_pdf.name)
+            os.remove(tmp_docx.name)
+        except Exception:
+            pass
+
+        b64 = base64.b64encode(data).decode("utf-8")
+        return jsonify({"result_b64": b64, "format": "docx"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
