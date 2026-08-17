@@ -6,520 +6,221 @@
   <title>SaaSy — Free File Toolkit</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #080810;
-      color: #fff;
-      min-height: 100vh;
-    }
-
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 40px;
-      border-bottom: 1px solid #ffffff10;
-    }
-    .logo {
-      font-size: 1.4rem;
-      font-weight: 700;
-      background: linear-gradient(90deg, #a78bfa, #60a5fa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .nav-badge {
-      background: #ffffff10;
-      border: 1px solid #ffffff20;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      color: #aaa;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 60px 20px 40px;
-    }
-    .hero-tag {
-      display: inline-block;
-      background: #a78bfa20;
-      border: 1px solid #a78bfa40;
-      color: #a78bfa;
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      margin-bottom: 20px;
-    }
-    .hero h1 {
-      font-size: clamp(1.8rem, 4vw, 3rem);
-      font-weight: 800;
-      margin-bottom: 12px;
-    }
-    .hero h1 span {
-      background: linear-gradient(90deg, #a78bfa, #60a5fa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    body { font-family: 'Segoe UI', sans-serif; background: #080810; color: #fff; min-height: 100vh; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid #ffffff10; }
+    .logo { font-size: 1.4rem; font-weight: 700; background: linear-gradient(90deg, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-badge { background: #ffffff10; border: 1px solid #ffffff20; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; color: #aaa; }
+    .hero { text-align: center; padding: 60px 20px 40px; }
+    .hero-tag { display: inline-block; background: #a78bfa20; border: 1px solid #a78bfa40; color: #a78bfa; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 20px; }
+    .hero h1 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; margin-bottom: 12px; }
+    .hero h1 span { background: linear-gradient(90deg, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .hero p { color: #888; font-size: 1rem; }
-
-    .tabs {
-      display: flex;
-      gap: 10px;
-      padding: 30px 20px 0;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      padding-bottom: 10px;
-    }
+    .tabs { display: flex; gap: 10px; padding: 30px 20px 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
-    .tab { flex-shrink: 0; }
-    
-    .tab {
-      padding: 10px 22px;
-      border-radius: 30px;
-      border: 1px solid #333;
-      background: #0d0d1a;
-      color: #888;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
+    .tab { flex-shrink: 0; padding: 10px 22px; border-radius: 30px; border: 1px solid #333; background: #0d0d1a; color: #888; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
     .tab:hover { border-color: #a78bfa; color: #a78bfa; }
-    .tab.active {
-      background: #a78bfa20;
-      border-color: #a78bfa;
-      color: #a78bfa;
-    }
-
+    .tab.active { background: #a78bfa20; border-color: #a78bfa; color: #a78bfa; }
     .tools { max-width: 640px; margin: 0 auto; padding: 30px 20px 80px; }
     .tool-panel { display: none; }
     .tool-panel.active { display: block; }
-
-    .tool-card {
-      background: #0d0d1a;
-      border: 1px solid #ffffff08;
-      border-radius: 20px;
-      padding: 30px;
-      margin-bottom: 20px;
-    }
+    .tool-card { background: #0d0d1a; border: 1px solid #ffffff08; border-radius: 20px; padding: 30px; margin-bottom: 20px; }
     .tool-card h2 { font-size: 1.1rem; margin-bottom: 6px; }
     .tool-card p { color: #666; font-size: 0.85rem; margin-bottom: 20px; }
-
-    .upload-box {
-      border: 2px dashed #333;
-      border-radius: 14px;
-      padding: 30px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-bottom: 16px;
-    }
+    .upload-box { border: 2px dashed #333; border-radius: 14px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 16px; }
     .upload-box:hover { border-color: #a78bfa; background: #a78bfa08; }
-    .upload-box.dragover {
-      border-color: #a78bfa;
-      background: #a78bfa15;
-      transform: scale(1.01);
-    }
+    .upload-box.dragover { border-color: #a78bfa; background: #a78bfa15; transform: scale(1.01); }
     .upload-box input { display: none; }
     .upload-box label { cursor: pointer; display: block; }
     .upload-box .icon { font-size: 2rem; margin-bottom: 8px; }
     .upload-box h3 { font-size: 0.95rem; margin-bottom: 4px; }
     .upload-box p { font-size: 0.8rem; color: #555; margin: 0; }
-
-    .input-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 14px;
-      align-items: center;
-    }
+    .input-row { display: flex; gap: 10px; margin-bottom: 14px; align-items: center; }
     .input-row label { color: #888; font-size: 0.85rem; white-space: nowrap; }
-    input[type="number"], select {
-      background: #1a1a2e;
-      border: 1px solid #333;
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      flex: 1;
-    }
-
+    input[type="number"], select { background: #1a1a2e; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; flex: 1; }
     .slider-row { margin-bottom: 14px; }
-    .slider-row label {
-      display: flex;
-      justify-content: space-between;
-      color: #888;
-      font-size: 0.85rem;
-      margin-bottom: 8px;
-    }
+    .slider-row label { display: flex; justify-content: space-between; color: #888; font-size: 0.85rem; margin-bottom: 8px; }
     input[type="range"] { width: 100%; accent-color: #a78bfa; }
-
-    .btn {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      background: linear-gradient(90deg, #a78bfa, #60a5fa);
-      color: white;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.2s;
-      margin-top: 4px;
-    }
+    .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(90deg, #a78bfa, #60a5fa); color: white; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; margin-top: 4px; }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .progress-bar-wrap {
-      width: 100%;
-      background: #1a1a2e;
-      border-radius: 20px;
-      height: 8px;
-      margin-top: 12px;
-      display: none;
-      overflow: hidden;
-    }
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      border-radius: 20px;
-      background: linear-gradient(90deg, #a78bfa, #60a5fa);
-      transition: width 0.3s ease;
-    }
-
-    .status {
-      text-align: center;
-      margin-top: 12px;
-      color: #888;
-      font-size: 0.85rem;
-      min-height: 18px;
-    }
-
-    .result-box {
-      display: none;
-      margin-top: 20px;
-      text-align: center;
-    }
-    .result-img {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid #ffffff10;
-      margin-bottom: 12px;
-    }
-    .download-btn {
-      display: inline-block;
-      padding: 12px 30px;
-      border-radius: 12px;
-      background: #22c55e20;
-      border: 1px solid #22c55e40;
-      color: #22c55e;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
+    .progress-bar-wrap { width: 100%; background: #1a1a2e; border-radius: 20px; height: 8px; margin-top: 12px; display: none; overflow: hidden; }
+    .progress-bar { height: 100%; width: 0%; border-radius: 20px; background: linear-gradient(90deg, #a78bfa, #60a5fa); transition: width 0.3s ease; }
+    .status { text-align: center; margin-top: 12px; color: #888; font-size: 0.85rem; min-height: 18px; }
+    .result-box { display: none; margin-top: 20px; text-align: center; }
+    .result-img { width: 100%; border-radius: 12px; border: 1px solid #ffffff10; margin-bottom: 12px; }
+    .download-btn { display: inline-block; padding: 12px 30px; border-radius: 12px; background: #22c55e20; border: 1px solid #22c55e40; color: #22c55e; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
     .download-btn:hover { background: #22c55e30; }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin-top: 40px;
-    }
-    .feature-card {
-      background: #0d0d1a;
-      border: 1px solid #ffffff08;
-      border-radius: 14px;
-      padding: 16px;
-      text-align: center;
-    }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 40px; }
+    .feature-card { background: #0d0d1a; border: 1px solid #ffffff08; border-radius: 14px; padding: 16px; text-align: center; }
     .feature-card .icon { font-size: 1.3rem; margin-bottom: 8px; }
     .feature-card h4 { font-size: 0.85rem; margin-bottom: 4px; }
     .feature-card p { font-size: 0.75rem; color: #555; }
-
-    footer {
-      text-align: center;
-      padding: 30px 20px;
-      color: #333;
-      font-size: 0.8rem;
-      border-top: 1px solid #ffffff08;
-    }
+    footer { text-align: center; padding: 30px 20px; color: #333; font-size: 0.8rem; border-top: 1px solid #ffffff08; }
   </style>
 </head>
 <body>
-
 <nav>
   <div class="logo">SaaSy ✦</div>
   <div class="nav-badge">100% Free — No signup needed</div>
 </nav>
-
 <div class="hero">
   <div class="hero-tag">✦ All-in-one File Toolkit</div>
   <h1>Every file tool<br/><span>you'll ever need</span></h1>
   <p>Images, PDFs — compress, convert, resize, merge. All free, no watermarks.</p>
 </div>
-
 <div class="tabs">
   <button class="tab active" onclick="switchTab('compress-img', this)">🗜️ Compress Image</button>
   <button class="tab" onclick="switchTab('resize-img', this)">📐 Resize Image</button>
   <button class="tab" onclick="switchTab('convert-img', this)">🔄 Convert Image</button>
   <button class="tab" onclick="switchTab('crop-img', this)">✂️ Crop Image</button>
+  <button class="tab" onclick="switchTab('img-to-pdf', this)">🖼️ Image to PDF</button>
+  <button class="tab" onclick="switchTab('pdf-to-img', this)">📄 PDF to Image</button>
+  <button class="tab" onclick="switchTab('docx-to-pdf', this)">📝 Word to PDF</button>
   <button class="tab" onclick="switchTab('merge-pdf', this)">📄 Merge PDF</button>
   <button class="tab" onclick="switchTab('compress-pdf', this)">🗜️ Compress PDF</button>
   <button class="tab" onclick="switchTab('split-pdf', this)">✂️ Split PDF</button>
 </div>
-
 <div class="tools">
-
   <!-- COMPRESS IMAGE -->
   <div class="tool-panel active" id="panel-compress-img">
     <div class="tool-card">
       <h2>🗜️ Compress Image</h2>
       <p>Reduce file size while keeping good quality. Perfect for Shopee, Lazada, and social media.</p>
-      <div class="upload-box">
-        <label for="compress-input">
-          <div class="icon">🖼️</div>
-          <h3>Click or drag image here</h3>
-          <p>JPG, PNG supported</p>
-          <input type="file" id="compress-input" accept="image/*"/>
-        </label>
-      </div>
-      <div class="slider-row">
-        <label>
-          <span>Quality</span>
-          <span id="quality-val">70%</span>
-        </label>
-        <input type="range" id="quality-slider" min="10" max="95" value="70"
-          oninput="document.getElementById('quality-val').textContent = this.value + '%'"/>
-      </div>
+      <div class="upload-box"><label for="compress-input"><div class="icon">🖼️</div><h3>Click or drag image here</h3><p>JPG, PNG supported</p><input type="file" id="compress-input" accept="image/*"/></label></div>
+      <div class="slider-row"><label><span>Quality</span><span id="quality-val">70%</span></label><input type="range" id="quality-slider" min="10" max="95" value="70" oninput="document.getElementById('quality-val').textContent = this.value + '%'"/></div>
       <button class="btn" onclick="compressImage()">✦ Compress Image</button>
-      <div class="progress-bar-wrap" id="compress-progress-wrap">
-        <div class="progress-bar" id="compress-progress"></div>
-      </div>
+      <div class="progress-bar-wrap" id="compress-progress-wrap"><div class="progress-bar" id="compress-progress"></div></div>
       <p class="status" id="compress-status"></p>
-      <div class="result-box" id="compress-result">
-        <img class="result-img" id="compress-img-out" alt="Compressed"/>
-        <br/>
-        <a class="download-btn" id="compress-download" href="#" download="compressed.jpg">⬇ Download</a>
-      </div>
+      <div class="result-box" id="compress-result"><img class="result-img" id="compress-img-out" alt="Compressed"/><br/><a class="download-btn" id="compress-download" href="#" download="compressed.jpg">⬇ Download</a></div>
     </div>
   </div>
-
   <!-- RESIZE IMAGE -->
   <div class="tool-panel" id="panel-resize-img">
     <div class="tool-card">
       <h2>📐 Resize Image</h2>
       <p>Change the dimensions of any image to exact pixel sizes.</p>
-      <div class="upload-box">
-        <label for="resize-input">
-          <div class="icon">🖼️</div>
-          <h3>Click or drag image here</h3>
-          <p>JPG, PNG supported</p>
-          <input type="file" id="resize-input" accept="image/*"/>
-        </label>
-      </div>
-      <div class="input-row">
-        <label>Width (px)</label>
-        <input type="number" id="resize-width" value="800" min="1" max="5000"/>
-        <label>Height (px)</label>
-        <input type="number" id="resize-height" value="600" min="1" max="5000"/>
-      </div>
+      <div class="upload-box"><label for="resize-input"><div class="icon">🖼️</div><h3>Click or drag image here</h3><p>JPG, PNG supported</p><input type="file" id="resize-input" accept="image/*"/></label></div>
+      <div class="input-row"><label>Width (px)</label><input type="number" id="resize-width" value="800" min="1" max="5000"/><label>Height (px)</label><input type="number" id="resize-height" value="600" min="1" max="5000"/></div>
       <button class="btn" onclick="resizeImage()">✦ Resize Image</button>
-      <div class="progress-bar-wrap" id="resize-progress-wrap">
-        <div class="progress-bar" id="resize-progress"></div>
-      </div>
+      <div class="progress-bar-wrap" id="resize-progress-wrap"><div class="progress-bar" id="resize-progress"></div></div>
       <p class="status" id="resize-status"></p>
-      <div class="result-box" id="resize-result">
-        <img class="result-img" id="resize-img-out" alt="Resized"/>
-        <br/>
-        <a class="download-btn" id="resize-download" href="#" download="resized.png">⬇ Download</a>
-      </div>
+      <div class="result-box" id="resize-result"><img class="result-img" id="resize-img-out" alt="Resized"/><br/><a class="download-btn" id="resize-download" href="#" download="resized.png">⬇ Download</a></div>
     </div>
   </div>
-
   <!-- CONVERT IMAGE -->
   <div class="tool-panel" id="panel-convert-img">
     <div class="tool-card">
       <h2>🔄 Convert Image</h2>
       <p>Convert between JPG, PNG, and WEBP formats instantly.</p>
-      <div class="upload-box">
-        <label for="convert-input">
-          <div class="icon">🖼️</div>
-          <h3>Click or drag image here</h3>
-          <p>JPG, PNG, WEBP supported</p>
-          <input type="file" id="convert-input" accept="image/*"/>
-        </label>
-      </div>
-      <div class="input-row">
-        <label>Convert to</label>
-        <select id="convert-format">
-          <option value="jpg">JPG</option>
-          <option value="png">PNG</option>
-          <option value="webp">WEBP</option>
-        </select>
-      </div>
+      <div class="upload-box"><label for="convert-input"><div class="icon">🖼️</div><h3>Click or drag image here</h3><p>JPG, PNG, WEBP supported</p><input type="file" id="convert-input" accept="image/*"/></label></div>
+      <div class="input-row"><label>Convert to</label><select id="convert-format"><option value="jpg">JPG</option><option value="png">PNG</option><option value="webp">WEBP</option></select></div>
       <button class="btn" onclick="convertImage()">✦ Convert Image</button>
-      <div class="progress-bar-wrap" id="convert-progress-wrap">
-        <div class="progress-bar" id="convert-progress"></div>
-      </div>
+      <div class="progress-bar-wrap" id="convert-progress-wrap"><div class="progress-bar" id="convert-progress"></div></div>
       <p class="status" id="convert-status"></p>
-      <div class="result-box" id="convert-result">
-        <img class="result-img" id="convert-img-out" alt="Converted"/>
-        <br/>
-        <a class="download-btn" id="convert-download" href="#" download="converted">⬇ Download</a>
-      </div>
+      <div class="result-box" id="convert-result"><img class="result-img" id="convert-img-out" alt="Converted"/><br/><a class="download-btn" id="convert-download" href="#" download="converted">⬇ Download</a></div>
     </div>
   </div>
-
   <!-- CROP IMAGE -->
   <div class="tool-panel" id="panel-crop-img">
     <div class="tool-card">
       <h2>✂️ Crop Image</h2>
       <p>Cut out any part of your image by entering the crop area coordinates.</p>
-      <div class="upload-box">
-        <label for="crop-input">
-          <div class="icon">🖼️</div>
-          <h3>Click or drag image here</h3>
-          <p>JPG, PNG supported</p>
-          <input type="file" id="crop-input" accept="image/*" onchange="previewCropImage(this)"/>
-        </label>
-      </div>
+      <div class="upload-box"><label for="crop-input"><div class="icon">🖼️</div><h3>Click or drag image here</h3><p>JPG, PNG supported</p><input type="file" id="crop-input" accept="image/*" onchange="previewCropImage(this)"/></label></div>
       <img id="crop-preview" style="width:100%;border-radius:12px;margin-bottom:16px;display:none;" alt="Preview"/>
       <p id="crop-dimensions" style="color:#666;font-size:0.8rem;margin-bottom:12px;"></p>
-      <div class="input-row">
-        <label>X (px)</label>
-        <input type="number" id="crop-x" value="0" min="0"/>
-        <label>Y (px)</label>
-        <input type="number" id="crop-y" value="0" min="0"/>
-      </div>
-      <div class="input-row">
-        <label>Width (px)</label>
-        <input type="number" id="crop-width" value="200" min="1"/>
-        <label>Height (px)</label>
-        <input type="number" id="crop-height" value="200" min="1"/>
-      </div>
+      <div class="input-row"><label>X (px)</label><input type="number" id="crop-x" value="0" min="0"/><label>Y (px)</label><input type="number" id="crop-y" value="0" min="0"/></div>
+      <div class="input-row"><label>Width (px)</label><input type="number" id="crop-width" value="200" min="1"/><label>Height (px)</label><input type="number" id="crop-height" value="200" min="1"/></div>
       <button class="btn" onclick="cropImage()">✂️ Crop Image</button>
-      <div class="progress-bar-wrap" id="crop-progress-wrap">
-        <div class="progress-bar" id="crop-progress"></div>
-      </div>
+      <div class="progress-bar-wrap" id="crop-progress-wrap"><div class="progress-bar" id="crop-progress"></div></div>
       <p class="status" id="crop-status"></p>
-      <div class="result-box" id="crop-result">
-        <img class="result-img" id="crop-img-out" alt="Cropped"/>
-        <br/>
-        <a class="download-btn" id="crop-download" href="#" download="cropped.png">⬇ Download</a>
-      </div>
+      <div class="result-box" id="crop-result"><img class="result-img" id="crop-img-out" alt="Cropped"/><br/><a class="download-btn" id="crop-download" href="#" download="cropped.png">⬇ Download</a></div>
     </div>
   </div>
-
+  <!-- IMAGE TO PDF -->
+  <div class="tool-panel" id="panel-img-to-pdf">
+    <div class="tool-card">
+      <h2>🖼️ Image to PDF</h2>
+      <p>Convert one or multiple images into a single PDF file.</p>
+      <div class="upload-box"><label for="img-to-pdf-input"><div class="icon">🖼️</div><h3>Click or drag images here</h3><p>Select one or multiple images</p><input type="file" id="img-to-pdf-input" accept="image/*" multiple/></label></div>
+      <button class="btn" onclick="imgToPdf()">✦ Convert to PDF</button>
+      <div class="progress-bar-wrap" id="img-to-pdf-progress-wrap"><div class="progress-bar" id="img-to-pdf-progress"></div></div>
+      <p class="status" id="img-to-pdf-status"></p>
+      <div class="result-box" id="img-to-pdf-result"><a class="download-btn" id="img-to-pdf-download" href="#" download="converted.pdf">⬇ Download PDF</a></div>
+    </div>
+  </div>
+  <!-- PDF TO IMAGE -->
+  <div class="tool-panel" id="panel-pdf-to-img">
+    <div class="tool-card">
+      <h2>📄 PDF to Image</h2>
+      <p>Convert any page of a PDF into a high quality PNG image.</p>
+      <div class="upload-box"><label for="pdf-to-img-input"><div class="icon">📄</div><h3>Click or drag PDF here</h3><p>PDF files only</p><input type="file" id="pdf-to-img-input" accept=".pdf"/></label></div>
+      <div class="input-row"><label>Page number</label><input type="number" id="pdf-to-img-page" value="1" min="1"/></div>
+      <button class="btn" onclick="pdfToImg()">✦ Convert to Image</button>
+      <div class="progress-bar-wrap" id="pdf-to-img-progress-wrap"><div class="progress-bar" id="pdf-to-img-progress"></div></div>
+      <p class="status" id="pdf-to-img-status"></p>
+      <div class="result-box" id="pdf-to-img-result"><img class="result-img" id="pdf-to-img-out" alt="PDF page as image"/><br/><a class="download-btn" id="pdf-to-img-download" href="#" download="page.png">⬇ Download Image</a></div>
+    </div>
+  </div>
+  <!-- WORD TO PDF -->
+  <div class="tool-panel" id="panel-docx-to-pdf">
+    <div class="tool-card">
+      <h2>📝 Word to PDF</h2>
+      <p>Convert your Word documents (.docx) to PDF instantly.</p>
+      <div class="upload-box"><label for="docx-to-pdf-input"><div class="icon">📝</div><h3>Click or drag Word file here</h3><p>.docx files only</p><input type="file" id="docx-to-pdf-input" accept=".docx"/></label></div>
+      <button class="btn" onclick="docxToPdf()">✦ Convert to PDF</button>
+      <div class="progress-bar-wrap" id="docx-to-pdf-progress-wrap"><div class="progress-bar" id="docx-to-pdf-progress"></div></div>
+      <p class="status" id="docx-to-pdf-status"></p>
+      <div class="result-box" id="docx-to-pdf-result"><a class="download-btn" id="docx-to-pdf-download" href="#" download="converted.pdf">⬇ Download PDF</a></div>
+    </div>
+  </div>
   <!-- MERGE PDF -->
   <div class="tool-panel" id="panel-merge-pdf">
     <div class="tool-card">
       <h2>📄 Merge PDF</h2>
       <p>Combine multiple PDF files into one. Hold Ctrl (or Cmd on Mac) to select multiple files.</p>
-      <div class="upload-box">
-        <label for="merge-input">
-          <div class="icon">📄</div>
-          <h3>Click or drag PDFs here</h3>
-          <p>Select multiple PDF files</p>
-          <input type="file" id="merge-input" accept=".pdf" multiple/>
-        </label>
-      </div>
+      <div class="upload-box"><label for="merge-input"><div class="icon">📄</div><h3>Click or drag PDFs here</h3><p>Select multiple PDF files</p><input type="file" id="merge-input" accept=".pdf" multiple/></label></div>
       <button class="btn" onclick="mergePDF()">✦ Merge PDFs</button>
-      <div class="progress-bar-wrap" id="merge-progress-wrap">
-        <div class="progress-bar" id="merge-progress"></div>
-      </div>
+      <div class="progress-bar-wrap" id="merge-progress-wrap"><div class="progress-bar" id="merge-progress"></div></div>
       <p class="status" id="merge-status"></p>
-      <div class="result-box" id="merge-result">
-        <a class="download-btn" id="merge-download" href="#" download="merged.pdf">⬇ Download Merged PDF</a>
-      </div>
+      <div class="result-box" id="merge-result"><a class="download-btn" id="merge-download" href="#" download="merged.pdf">⬇ Download Merged PDF</a></div>
     </div>
   </div>
-
   <!-- COMPRESS PDF -->
   <div class="tool-panel" id="panel-compress-pdf">
     <div class="tool-card">
       <h2>🗜️ Compress PDF</h2>
       <p>Reduce PDF file size without losing content.</p>
-      <div class="upload-box">
-        <label for="compress-pdf-input">
-          <div class="icon">📄</div>
-          <h3>Click or drag PDF here</h3>
-          <p>PDF files only</p>
-          <input type="file" id="compress-pdf-input" accept=".pdf"/>
-        </label>
-      </div>
+      <div class="upload-box"><label for="compress-pdf-input"><div class="icon">📄</div><h3>Click or drag PDF here</h3><p>PDF files only</p><input type="file" id="compress-pdf-input" accept=".pdf"/></label></div>
       <button class="btn" onclick="compressPDF()">✦ Compress PDF</button>
-      <div class="progress-bar-wrap" id="compress-pdf-progress-wrap">
-        <div class="progress-bar" id="compress-pdf-progress"></div>
-      </div>
+      <div class="progress-bar-wrap" id="compress-pdf-progress-wrap"><div class="progress-bar" id="compress-pdf-progress"></div></div>
       <p class="status" id="compress-pdf-status"></p>
-      <div class="result-box" id="compress-pdf-result">
-        <a class="download-btn" id="compress-pdf-download" href="#" download="compressed.pdf">⬇ Download Compressed PDF</a>
-      </div>
+      <div class="result-box" id="compress-pdf-result"><a class="download-btn" id="compress-pdf-download" href="#" download="compressed.pdf">⬇ Download Compressed PDF</a></div>
     </div>
   </div>
-
   <!-- SPLIT PDF -->
   <div class="tool-panel" id="panel-split-pdf">
     <div class="tool-card">
       <h2>✂️ Split PDF</h2>
       <p>Extract a single page from a PDF file.</p>
-      <div class="upload-box">
-        <label for="split-input">
-          <div class="icon">📄</div>
-          <h3>Click or drag PDF here</h3>
-          <p>PDF files only</p>
-          <input type="file" id="split-input" accept=".pdf"/>
-        </label>
-      </div>
-      <div class="input-row">
-        <label>Page number</label>
-        <input type="number" id="split-page" value="1" min="1"/>
-      </div>
+      <div class="upload-box"><label for="split-input"><div class="icon">📄</div><h3>Click or drag PDF here</h3><p>PDF files only</p><input type="file" id="split-input" accept=".pdf"/></label></div>
+      <div class="input-row"><label>Page number</label><input type="number" id="split-page" value="1" min="1"/></div>
       <button class="btn" onclick="splitPDF()">✦ Extract Page</button>
-      <div class="progress-bar-wrap" id="split-progress-wrap">
-        <div class="progress-bar" id="split-progress"></div>
-      </div>
+      <div class="progress-bar-wrap" id="split-progress-wrap"><div class="progress-bar" id="split-progress"></div></div>
       <p class="status" id="split-status"></p>
-      <div class="result-box" id="split-result">
-        <a class="download-btn" id="split-download" href="#" download="page.pdf">⬇ Download Page</a>
-      </div>
+      <div class="result-box" id="split-result"><a class="download-btn" id="split-download" href="#" download="page.pdf">⬇ Download Page</a></div>
     </div>
   </div>
-
   <!-- FEATURES -->
   <div class="features">
-    <div class="feature-card">
-      <div class="icon">⚡</div>
-      <h4>Instant results</h4>
-      <p>Done in seconds</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">🔒</div>
-      <h4>Private</h4>
-      <p>Files never stored</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">💎</div>
-      <h4>No watermarks</h4>
-      <p>Clean output always</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">🆓</div>
-      <h4>Always free</h4>
-      <p>No signup needed</p>
-    </div>
+    <div class="feature-card"><div class="icon">⚡</div><h4>Instant results</h4><p>Done in seconds</p></div>
+    <div class="feature-card"><div class="icon">🔒</div><h4>Private</h4><p>Files never stored</p></div>
+    <div class="feature-card"><div class="icon">💎</div><h4>No watermarks</h4><p>Clean output always</p></div>
+    <div class="feature-card"><div class="icon">🆓</div><h4>Always free</h4><p>No signup needed</p></div>
   </div>
-
 </div>
-
 <footer>
-  Made with ❤️ — SaaSy File Toolkit
-  <br/><br/>
-  <a href="https://ko-fi.com/jeankraftable" target="_blank"
-    style="display:inline-block; background:#FF5E5B; color:#fff; padding:10px 24px; border-radius:20px; text-decoration:none; font-weight:700; font-size:0.9rem;">
-    ☕ Support SaaSy on Ko-fi
-  </a>
+  Made with ❤️ — SaaSy File Toolkit<br/><br/>
+  <a href="https://ko-fi.com/jeankraftable" target="_blank" style="display:inline-block; background:#FF5E5B; color:#fff; padding:10px 24px; border-radius:20px; text-decoration:none; font-weight:700; font-size:0.9rem;">☕ Support SaaSy on Ko-fi</a>
 </footer>
-
 <script>
   function switchTab(id, el) {
     document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
@@ -527,11 +228,9 @@
     el.classList.add("active");
     document.getElementById("panel-" + id).classList.add("active");
   }
-
   function b64ToUrl(b64, fmt) {
     return `data:${fmt === "pdf" ? "application/pdf" : "image/" + fmt};base64,` + b64;
   }
-
   function showProgress(id) {
     const wrap = document.getElementById(id + "-progress-wrap");
     const bar = document.getElementById(id + "-progress");
@@ -546,24 +245,17 @@
     }, 300);
     return { interval, bar, wrap };
   }
-
   function doneProgress(progress) {
     if (!progress) return;
     clearInterval(progress.interval);
     progress.bar.style.width = "100%";
-    setTimeout(() => {
-      progress.wrap.style.display = "none";
-      progress.bar.style.width = "0%";
-    }, 600);
+    setTimeout(() => { progress.wrap.style.display = "none"; progress.bar.style.width = "0%"; }, 600);
   }
-
-  // Drag and drop for all upload boxes
   document.querySelectorAll(".upload-box").forEach(box => {
     box.addEventListener("dragover", e => { e.preventDefault(); box.classList.add("dragover"); });
     box.addEventListener("dragleave", () => box.classList.remove("dragover"));
     box.addEventListener("drop", e => {
-      e.preventDefault();
-      box.classList.remove("dragover");
+      e.preventDefault(); box.classList.remove("dragover");
       const input = box.querySelector("input[type='file']");
       const files = e.dataTransfer.files;
       if (!files.length) return;
@@ -575,7 +267,6 @@
       if (input.onchange) input.onchange({ target: input });
     });
   });
-
   async function compressImage() {
     const file = document.getElementById("compress-input").files[0];
     if (!file) return alert("Please choose an image first!");
@@ -584,12 +275,10 @@
     status.textContent = "⏳ Compressing...";
     const progress = showProgress("compress");
     const form = new FormData();
-    form.append("image", file);
-    form.append("quality", quality);
+    form.append("image", file); form.append("quality", quality);
     try {
       const res = await fetch("/compress", { method: "POST", body: form });
-      const data = await res.json();
-      doneProgress(progress);
+      const data = await res.json(); doneProgress(progress);
       if (data.error) return status.textContent = "Error: " + data.error;
       const url = b64ToUrl(data.result_b64, data.format);
       document.getElementById("compress-img-out").src = url;
@@ -601,7 +290,6 @@
       status.textContent = `✓ Done! ${originalKB}KB → ${newKB}KB (saved ${saving}%)`;
     } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
   }
-
   async function resizeImage() {
     const file = document.getElementById("resize-input").files[0];
     if (!file) return alert("Please choose an image first!");
@@ -611,13 +299,10 @@
     status.textContent = "⏳ Resizing...";
     const progress = showProgress("resize");
     const form = new FormData();
-    form.append("image", file);
-    form.append("width", w);
-    form.append("height", h);
+    form.append("image", file); form.append("width", w); form.append("height", h);
     try {
       const res = await fetch("/resize", { method: "POST", body: form });
-      const data = await res.json();
-      doneProgress(progress);
+      const data = await res.json(); doneProgress(progress);
       if (data.error) return status.textContent = "Error: " + data.error;
       const url = b64ToUrl(data.result_b64, data.format);
       document.getElementById("resize-img-out").src = url;
@@ -626,7 +311,6 @@
       status.textContent = "✓ Done!";
     } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
   }
-
   async function convertImage() {
     const file = document.getElementById("convert-input").files[0];
     if (!file) return alert("Please choose an image first!");
@@ -635,29 +319,23 @@
     status.textContent = "⏳ Converting...";
     const progress = showProgress("convert");
     const form = new FormData();
-    form.append("image", file);
-    form.append("format", fmt);
+    form.append("image", file); form.append("format", fmt);
     try {
       const res = await fetch("/convert", { method: "POST", body: form });
-      const data = await res.json();
-      doneProgress(progress);
+      const data = await res.json(); doneProgress(progress);
       if (data.error) return status.textContent = "Error: " + data.error;
       const url = b64ToUrl(data.result_b64, fmt);
       document.getElementById("convert-img-out").src = url;
       const dl = document.getElementById("convert-download");
-      dl.href = url;
-      dl.download = "converted." + fmt;
+      dl.href = url; dl.download = "converted." + fmt;
       document.getElementById("convert-result").style.display = "block";
       status.textContent = "✓ Done!";
     } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
   }
-
   function previewCropImage(input) {
-    const file = input.files[0];
-    if (!file) return;
+    const file = input.files[0]; if (!file) return;
     const preview = document.getElementById("crop-preview");
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = "block";
+    preview.src = URL.createObjectURL(file); preview.style.display = "block";
     const img = new Image();
     img.onload = () => {
       document.getElementById("crop-dimensions").textContent = `Image size: ${img.width}px × ${img.height}px`;
@@ -666,7 +344,6 @@
     };
     img.src = preview.src;
   }
-
   async function cropImage() {
     const file = document.getElementById("crop-input").files[0];
     if (!file) return alert("Please choose an image first!");
@@ -681,8 +358,7 @@
     form.append("height", document.getElementById("crop-height").value);
     try {
       const res = await fetch("/crop", { method: "POST", body: form });
-      const data = await res.json();
-      doneProgress(progress);
+      const data = await res.json(); doneProgress(progress);
       if (data.error) return status.textContent = "Error: " + data.error;
       const url = b64ToUrl(data.result_b64, "png");
       document.getElementById("crop-img-out").src = url;
@@ -691,7 +367,62 @@
       status.textContent = "✓ Done!";
     } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
   }
-
+  async function imgToPdf() {
+    const files = document.getElementById("img-to-pdf-input").files;
+    if (!files.length) return alert("Please choose at least one image!");
+    const status = document.getElementById("img-to-pdf-status");
+    status.textContent = "⏳ Converting...";
+    const progress = showProgress("img-to-pdf");
+    const form = new FormData();
+    for (const f of files) form.append("images", f);
+    try {
+      const res = await fetch("/img-to-pdf", { method: "POST", body: form });
+      const data = await res.json(); doneProgress(progress);
+      if (data.error) return status.textContent = "Error: " + data.error;
+      const url = b64ToUrl(data.result_b64, "pdf");
+      document.getElementById("img-to-pdf-download").href = url;
+      document.getElementById("img-to-pdf-result").style.display = "block";
+      status.textContent = "✓ Done!";
+    } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
+  }
+  async function pdfToImg() {
+    const file = document.getElementById("pdf-to-img-input").files[0];
+    if (!file) return alert("Please choose a PDF first!");
+    const page = document.getElementById("pdf-to-img-page").value;
+    const status = document.getElementById("pdf-to-img-status");
+    status.textContent = "⏳ Converting...";
+    const progress = showProgress("pdf-to-img");
+    const form = new FormData();
+    form.append("pdf", file); form.append("page", page);
+    try {
+      const res = await fetch("/pdf-to-img", { method: "POST", body: form });
+      const data = await res.json(); doneProgress(progress);
+      if (data.error) return status.textContent = "Error: " + data.error;
+      const url = b64ToUrl(data.result_b64, "png");
+      document.getElementById("pdf-to-img-out").src = url;
+      document.getElementById("pdf-to-img-download").href = url;
+      document.getElementById("pdf-to-img-result").style.display = "block";
+      status.textContent = `✓ Done! PDF has ${data.total_pages} pages total.`;
+    } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
+  }
+  async function docxToPdf() {
+    const file = document.getElementById("docx-to-pdf-input").files[0];
+    if (!file) return alert("Please choose a Word file first!");
+    const status = document.getElementById("docx-to-pdf-status");
+    status.textContent = "⏳ Converting...";
+    const progress = showProgress("docx-to-pdf");
+    const form = new FormData();
+    form.append("file", file);
+    try {
+      const res = await fetch("/docx-to-pdf", { method: "POST", body: form });
+      const data = await res.json(); doneProgress(progress);
+      if (data.error) return status.textContent = "Error: " + data.error;
+      const url = b64ToUrl(data.result_b64, "pdf");
+      document.getElementById("docx-to-pdf-download").href = url;
+      document.getElementById("docx-to-pdf-result").style.display = "block";
+      status.textContent = "✓ Done!";
+    } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
+  }
   async function mergePDF() {
     const files = document.getElementById("merge-input").files;
     if (files.length < 2) return alert("Hold Ctrl (or Cmd on Mac) while clicking to select multiple PDF files at once!");
@@ -702,8 +433,7 @@
     for (const f of files) form.append("pdfs", f);
     try {
       const res = await fetch("/merge-pdf", { method: "POST", body: form });
-      const data = await res.json();
-      doneProgress(progress);
+      const data = await res.json(); doneProgress(progress);
       if (data.error) return status.textContent = "Error: " + data.error;
       const url = b64ToUrl(data.result_b64, "pdf");
       document.getElementById("merge-download").href = url;
@@ -711,7 +441,6 @@
       status.textContent = "✓ Done!";
     } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
   }
-
   async function compressPDF() {
     const file = document.getElementById("compress-pdf-input").files[0];
     if (!file) return alert("Please choose a PDF first!");
@@ -722,8 +451,7 @@
     form.append("pdf", file);
     try {
       const res = await fetch("/compress-pdf", { method: "POST", body: form });
-      const data = await res.json();
-      doneProgress(progress);
+      const data = await res.json(); doneProgress(progress);
       if (data.error) return status.textContent = "Error: " + data.error;
       const url = b64ToUrl(data.result_b64, "pdf");
       document.getElementById("compress-pdf-download").href = url;
@@ -734,7 +462,6 @@
       status.textContent = `✓ Done! ${originalKB}KB → ${newKB}KB (saved ${saving}%)`;
     } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
   }
-
   async function splitPDF() {
     const file = document.getElementById("split-input").files[0];
     if (!file) return alert("Please choose a PDF first!");
@@ -743,22 +470,18 @@
     status.textContent = "⏳ Extracting page...";
     const progress = showProgress("split");
     const form = new FormData();
-    form.append("pdf", file);
-    form.append("page", page);
+    form.append("pdf", file); form.append("page", page);
     try {
       const res = await fetch("/split-pdf", { method: "POST", body: form });
-      const data = await res.json();
-      doneProgress(progress);
+      const data = await res.json(); doneProgress(progress);
       if (data.error) return status.textContent = "Error: " + data.error;
       const url = b64ToUrl(data.result_b64, "pdf");
       const dl = document.getElementById("split-download");
-      dl.href = url;
-      dl.download = `page-${page}.pdf`;
+      dl.href = url; dl.download = `page-${page}.pdf`;
       document.getElementById("split-result").style.display = "block";
       status.textContent = `✓ Done! PDF has ${data.total_pages} pages total.`;
     } catch(e) { doneProgress(progress); status.textContent = "Something went wrong."; }
   }
 </script>
-
 </body>
 </html>
