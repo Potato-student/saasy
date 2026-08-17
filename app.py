@@ -201,18 +201,24 @@ def pdf_to_img():
 @app.route("/docx-to-pdf", methods=["POST"])
 def docx_to_pdf():
     try:
-        from docx2pdf import convert
-        import tempfile
+        from docx import Document
         file = request.files["file"]
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp:
-            file.save(tmp.name)
-            tmp_path = tmp.name
-        out_path = tmp_path.replace(".docx", ".pdf")
-        convert(tmp_path, out_path)
-        with open(out_path, "rb") as f:
-            b64 = base64.b64encode(f.read()).decode("utf-8")
-        os.unlink(tmp_path)
-        os.unlink(out_path)
+        doc = Document(file)
+        pdf = fitz.open()
+        page = pdf.new_page()
+        y = 50
+        for para in doc.paragraphs:
+            if para.text.strip():
+                page.insert_text((50, y), para.text, fontsize=11)
+                y += 20
+                if y > 780:
+                    page = pdf.new_page()
+                    y = 50
+        buffer = io.BytesIO()
+        pdf.save(buffer)
+        pdf.close()
+        buffer.seek(0)
+        b64 = base64.b64encode(buffer.read()).decode("utf-8")
         return jsonify({"result_b64": b64, "format": "pdf"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
