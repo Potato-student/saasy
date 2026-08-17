@@ -153,5 +153,71 @@ def crop():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/img-to-pdf", methods=["POST"])
+def img_to_pdf():
+    try:
+        files = request.files.getlist("images")
+        pdf = fitz.open()
+        for file in files:
+            img = Image.open(file).convert("RGB")
+            buffer = io.BytesIO()
+            img.save(buffer, format="PNG")
+            buffer.seek(0)
+            img_bytes = buffer.read()
+            img_doc = fitz.open(stream=img_bytes, filetype="png")
+            rect = img_doc[0].rect
+            page = pdf.new_page(width=rect.width, height=rect.height)
+            page.show_pdf_page(rect, img_doc, 0)
+            img_doc.close()
+        buffer = io.BytesIO()
+        pdf.save(buffer)
+        pdf.close()
+        buffer.seek(0)
+        b64 = base64.b64encode(buffer.read()).decode("utf-8")
+        return jsonify({"result_b64": b64, "format": "pdf"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/pdf-to-img", methods=["POST"])
+def pdf_to_img():
+    try:
+        file = request.files["pdf"]
+        page_num = int(request.form.get("page", 1)) - 1
+        pdf_bytes = file.read()
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+        total_pages = len(doc)
+        if page_num < 0 or page_num >= total_pages:
+            return jsonify({"error": f"Page must be between 1 and {total_pages}"}), 400
+        page = doc[page_num]
+        mat = fitz.Matrix(2, 2)
+        pix = page.get_pixmap(matrix=mat)
+        img_bytes = pix.tobytes("png")
+        doc.close()
+        b64 = base64.b64encode(img_bytes).decode("utf-8")
+        return jsonify({"result_b64": b64, "format": "png", "total_pages": total_pages})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/docx-to-pdf", methods=["POST"])
+def docx_to_pdf():
+    try:
+        from docx2pdf import convert
+        import tempfile
+        file = request.files["file"]
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp:
+            file.save(tmp.name)
+            tmp_path = tmp.name
+        out_path = tmp_path.replace(".docx", ".pdf")
+        convert(tmp_path, out_path)
+        with open(out_path, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode("utf-8")
+        os.unlink(tmp_path)
+        os.unlink(out_path)
+        return jsonify({"result_b64": b64, "format": "pdf"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
